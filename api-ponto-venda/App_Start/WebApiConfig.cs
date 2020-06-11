@@ -1,5 +1,6 @@
 ﻿using Microsoft.Owin.Security.OAuth;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace api_ponto_venda
 {
@@ -10,6 +11,9 @@ namespace api_ponto_venda
             // Web API configuration and services
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+
+            EnableCorsAttribute cors = new EnableCorsAttribute("apipontovenda.azurewebsites.net", "*", "*");
+            config.EnableCors(cors);
 
             // Web API routes
             config.MapHttpAttributeRoutes();
