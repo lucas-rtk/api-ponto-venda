@@ -284,6 +284,7 @@
     <Compile Include="Business\Crypto.cs" />
     <Compile Include="Business\TokenManager.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\CaixasController.cs" />
     <Compile Include="Controllers\FornecedoresController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProdutosController.cs" />
@@ -300,7 +301,12 @@
     <Compile Include="Migrations\202006110111030_Produtos.designer.cs">
       <DependentUpon>202006110111030_Produtos.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202006260112389_Caixas.cs" />
+    <Compile Include="Migrations\202006260112389_Caixas.designer.cs">
+      <DependentUpon>202006260112389_Caixas.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Caixa.cs" />
     <Compile Include="Models\Fornecedor.cs" />
     <Compile Include="Models\Produto.cs" />
     <Compile Include="Models\Usuario.cs" />
@@ -462,6 +468,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202006110111030_Produtos.resx">
       <DependentUpon>202006110111030_Produtos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006260112389_Caixas.resx">
+      <DependentUpon>202006260112389_Caixas.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

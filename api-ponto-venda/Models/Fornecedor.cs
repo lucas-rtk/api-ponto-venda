@@ -23,7 +23,7 @@ namespace api_ponto_venda.Models
 
         public bool ValidarCamposObrigatorios()
         {
-            return (!String.IsNullOrWhiteSpace(RazaoSocial)) && (!String.IsNullOrWhiteSpace(CNPJ));
+            return (!string.IsNullOrWhiteSpace(RazaoSocial)) && (!string.IsNullOrWhiteSpace(CNPJ));
         }
     }
 }

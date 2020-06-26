@@ -15,14 +15,19 @@ namespace api_ponto_venda.Controllers
     {
         public HttpResponseMessage Post(Fornecedor fornecedor)
         {
-            HttpResponseMessage Retorno = new HttpResponseMessage();
+            if (ObterUsuario(RequestContext.Principal.Identity.Name).Perfil == PerfilUsuario.OperadorCaixa)
+                return new HttpResponseMessage()
+                {
+                    ReasonPhrase = "Usuário sem permissão para cadastrar fornecedores!",
+                    StatusCode = HttpStatusCode.Forbidden
+                };
 
             if (!fornecedor.ValidarCamposObrigatorios())
-            {
-                Retorno.ReasonPhrase = "A razão social e CNPJ do fornecedor não podem estar em branco!";
-                Retorno.StatusCode = HttpStatusCode.BadRequest;
-                return Retorno;
-            }
+                return new HttpResponseMessage()
+                {
+                    ReasonPhrase = "A razão social e CNPJ do fornecedor não podem estar em branco!",
+                    StatusCode = HttpStatusCode.BadRequest
+                };
 
             try
             {
@@ -35,15 +40,19 @@ namespace api_ponto_venda.Controllers
             {
                 while (e.InnerException != null) e = e.InnerException;
 
-                Retorno.Content = new StringContent(e.Message + "\n" + e.StackTrace);
-                Retorno.StatusCode = HttpStatusCode.InternalServerError;
-                return Retorno;
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent(e.Message + "\n\n" + e.StackTrace),
+                    StatusCode = HttpStatusCode.InternalServerError
+                };
             }
 
-            Retorno.ReasonPhrase = "Fornecedor criado com sucesso!";
-            Retorno.StatusCode = HttpStatusCode.OK;
-            Retorno.Headers.Add("FornecedorId", fornecedor.Id.ToString());
-            return Retorno;
+            return new HttpResponseMessage() 
+            {
+                ReasonPhrase = "Fornecedor criado com sucesso!",
+                StatusCode = HttpStatusCode.OK,
+                Headers = { { "FornecedorId", fornecedor.Id.ToString() } }
+            };
         }
 
         public Fornecedor Get(int Id)
@@ -55,6 +64,13 @@ namespace api_ponto_venda.Controllers
 
         public HttpResponseMessage Put(int Id, [FromBody] Fornecedor fornecedor)
         {
+            if (ObterUsuario(RequestContext.Principal.Identity.Name).Perfil == PerfilUsuario.OperadorCaixa)
+                return new HttpResponseMessage()
+                {
+                    ReasonPhrase = "Usuário sem permissão para alterar fornecedores!",
+                    StatusCode = HttpStatusCode.Forbidden
+                };
+
             if (!fornecedor.ValidarCamposObrigatorios())
                 return new HttpResponseMessage()
                 {
@@ -66,30 +82,26 @@ namespace api_ponto_venda.Controllers
             {
                 MySQLContext contexto = new MySQLContext();
 
-                Fornecedor tmp = contexto.Fornecedores
+                Fornecedor oldofnr = contexto.Fornecedores
                                    .Where(f => f.Id == Id)
                                    .SingleOrDefault();
 
-                if (tmp == null)
+                if (oldofnr == null)
                     return new HttpResponseMessage()
                     {
                         ReasonPhrase = "Fornecedor não encontrado com o ID informado!",
                         StatusCode = HttpStatusCode.BadRequest
                     };
 
-                tmp.RazaoSocial = fornecedor.RazaoSocial;
-                tmp.CNPJ = fornecedor.CNPJ;
-                tmp.Telefone = fornecedor.Telefone;
-                tmp.Email = fornecedor.Email;
-
-                contexto.SaveChanges();
+                contexto.Entry(oldofnr).CurrentValues.SetValues(fornecedor);
+                contexto.SaveChanges();                
             }
             catch (Exception e)
             {
                 while (e.InnerException != null) e = e.InnerException;
                 return new HttpResponseMessage()
                 {
-                    Content = new StringContent(e.Message + "\n" + e.StackTrace),
+                    Content = new StringContent(e.Message + "\n\n" + e.StackTrace),
                     StatusCode = HttpStatusCode.InternalServerError
                 };
             }
@@ -103,6 +115,13 @@ namespace api_ponto_venda.Controllers
 
         public HttpResponseMessage Delete(int Id)
         {
+            if (ObterUsuario(RequestContext.Principal.Identity.Name).Perfil == PerfilUsuario.OperadorCaixa)
+                return new HttpResponseMessage()
+                {
+                    ReasonPhrase = "Usuário sem permissão para cadastrar fornecedores!",
+                    StatusCode = HttpStatusCode.Forbidden
+                };
+
             MySQLContext contexto = new MySQLContext();
             Fornecedor tmp = new Fornecedor { Id = Id };
             
@@ -116,7 +135,7 @@ namespace api_ponto_venda.Controllers
                 while (e.InnerException != null) e = e.InnerException;
                 return new HttpResponseMessage()
                 {
-                    Content = new StringContent(e.Message + "\n" + e.StackTrace),
+                    Content = new StringContent(e.Message + "\n\n" + e.StackTrace),
                     StatusCode = HttpStatusCode.InternalServerError
                 };
             }

@@ -15,14 +15,19 @@ namespace api_ponto_venda.Controllers
     {
         public HttpResponseMessage Post(Produto produto)
         {
-            HttpResponseMessage Retorno = new HttpResponseMessage();
+            if (ObterUsuario(RequestContext.Principal.Identity.Name).Perfil == PerfilUsuario.OperadorCaixa)
+                return new HttpResponseMessage()
+                {
+                    ReasonPhrase = "Usuário sem permissão para cadastrar produtos!",
+                    StatusCode = HttpStatusCode.Forbidden
+                };
 
             if (!produto.ValidarCamposObrigatorios())
-            {
-                Retorno.ReasonPhrase = "O nome do produto não pode estar em branco!";
-                Retorno.StatusCode = HttpStatusCode.BadRequest;
-                return Retorno;
-            }
+                return new HttpResponseMessage()
+                {
+                    ReasonPhrase = "O nome do produto não pode estar em branco!",
+                    StatusCode = HttpStatusCode.BadRequest
+                };
 
             try
             {
@@ -35,15 +40,19 @@ namespace api_ponto_venda.Controllers
             {
                 while (e.InnerException != null) e = e.InnerException;
 
-                Retorno.Content = new StringContent(e.Message + "\n" + e.StackTrace);
-                Retorno.StatusCode = HttpStatusCode.InternalServerError;
-                return Retorno;
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent(e.Message + "\n\n" + e.StackTrace),
+                    StatusCode = HttpStatusCode.InternalServerError
+                };
             }
 
-            Retorno.ReasonPhrase = "Produto criado com sucesso!";
-            Retorno.StatusCode = HttpStatusCode.OK;
-            Retorno.Headers.Add("ProdutoId", produto.Id.ToString());
-            return Retorno;
+            return new HttpResponseMessage()
+            {
+                ReasonPhrase = "Produto criado com sucesso!",
+                StatusCode = HttpStatusCode.OK,
+                Headers = { { "ProdutoId", produto.Id.ToString() } }
+            };
         }
 
         public Produto Get(int Id)
@@ -55,6 +64,13 @@ namespace api_ponto_venda.Controllers
 
         public HttpResponseMessage Put(int Id, [FromBody] Produto produto)
         {
+            if (ObterUsuario(RequestContext.Principal.Identity.Name).Perfil == PerfilUsuario.OperadorCaixa)
+                return new HttpResponseMessage()
+                {
+                    ReasonPhrase = "Usuário sem permissão para alterar produtos!",
+                    StatusCode = HttpStatusCode.Forbidden
+                };
+
             if (!produto.ValidarCamposObrigatorios())
                 return new HttpResponseMessage()
                 {
@@ -66,24 +82,18 @@ namespace api_ponto_venda.Controllers
             {
                 MySQLContext contexto = new MySQLContext();
 
-                Produto tmp = contexto.Produtos
+                Produto oldprod = contexto.Produtos
                                    .Where(p => p.Id == Id)
                                    .SingleOrDefault();
 
-                if (tmp == null)
+                if (oldprod == null)
                     return new HttpResponseMessage()
                     {
                         ReasonPhrase = "Produto não encontrado com o ID informado!",
                         StatusCode = HttpStatusCode.BadRequest
                     };
 
-                tmp.Nome = produto.Nome;
-                tmp.EAN = produto.EAN;
-                tmp.Preco = produto.Preco;
-                tmp.IPI = produto.IPI;
-                tmp.ICMS = produto.ICMS;
-                tmp.Saldo = produto.Saldo;
-
+                contexto.Entry(oldprod).CurrentValues.SetValues(produto);
                 contexto.SaveChanges();
             }
             catch (Exception e)
@@ -91,7 +101,7 @@ namespace api_ponto_venda.Controllers
                 while (e.InnerException != null) e = e.InnerException;
                 return new HttpResponseMessage()
                 {
-                    Content = new StringContent(e.Message + "\n" + e.StackTrace),
+                    Content = new StringContent(e.Message + "\n\n" + e.StackTrace),
                     StatusCode = HttpStatusCode.InternalServerError
                 };
             }
@@ -105,6 +115,13 @@ namespace api_ponto_venda.Controllers
 
         public HttpResponseMessage Delete(int Id)
         {
+            if (ObterUsuario(RequestContext.Principal.Identity.Name).Perfil == PerfilUsuario.OperadorCaixa)
+                return new HttpResponseMessage()
+                {
+                    ReasonPhrase = "Usuário sem permissão para excluir produtos!",
+                    StatusCode = HttpStatusCode.Forbidden
+                };
+
             MySQLContext contexto = new MySQLContext();
             Produto tmp = new Produto { Id = Id };
 
@@ -118,7 +135,7 @@ namespace api_ponto_venda.Controllers
                 while (e.InnerException != null) e = e.InnerException;
                 return new HttpResponseMessage()
                 {
-                    Content = new StringContent(e.Message + "\n" + e.StackTrace),
+                    Content = new StringContent(e.Message + "\n\n" + e.StackTrace),
                     StatusCode = HttpStatusCode.InternalServerError
                 };
             }

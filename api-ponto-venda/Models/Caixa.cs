@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace api_ponto_venda.Models
 {
-    [Table("Produtos")]
-    public class Produto
+    [Table("Caixas")]
+    public class Caixa
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -13,12 +14,12 @@ namespace api_ponto_venda.Models
         [Required]
         [MaxLength(60)]
         public string Nome { get; set; }
-        [MaxLength(13)]
-        public string EAN { get; set; }
-        public double Preco { get; set; }
-        public double IPI { get; set; }
-        public double ICMS { get; set; }
         public double Saldo { get; set; }
+
+        public Caixa()
+        {
+            Saldo = 0;
+        }
 
         public bool ValidarCamposObrigatorios()
         {

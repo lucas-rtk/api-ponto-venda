@@ -35,6 +35,11 @@ namespace api_ponto_venda.Models
         [NotMapped]
         public string Senha { get; set; } //Campo utilizado apenas para receber a senha durante o login
 
+        public Usuario()
+        {
+            Perfil = PerfilUsuario.OperadorCaixa;
+        }
+
         public bool ValidarLogin()
         {
             if (String.IsNullOrWhiteSpace(Email) || String.IsNullOrWhiteSpace(Senha))
@@ -48,6 +53,11 @@ namespace api_ponto_venda.Models
                 return false;
 
             return Crypto.CompararHashes(usuario.SenhaCrypto, Crypto.CalcularHash(Senha));
+        }
+
+        public bool ValidarCamposObrigatorios()
+        {
+            return (!string.IsNullOrWhiteSpace(Email) || !string.IsNullOrWhiteSpace(Senha));
         }
     }
 }

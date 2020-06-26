@@ -12,7 +12,7 @@ namespace api_ponto_venda
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
 
-            EnableCorsAttribute cors = new EnableCorsAttribute("apipontovenda.azurewebsites.net", "*", "*");
+            EnableCorsAttribute cors = new EnableCorsAttribute("*", "*", "*");
             config.EnableCors(cors);
 
             // Web API routes

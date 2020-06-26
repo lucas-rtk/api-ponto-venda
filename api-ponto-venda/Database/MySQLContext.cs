@@ -10,6 +10,7 @@ namespace api_ponto_venda.Database
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Fornecedor> Fornecedores { get; set; }
         public DbSet<Produto> Produtos { get; set; }
+        public DbSet<Caixa> Caixas { get; set; }
 
         public MySQLContext() : base("ConexaoMySQL")
         {
