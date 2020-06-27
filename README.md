@@ -1,37 +1,32 @@
-## Welcome to GitHub Pages
+# api-ponto-venda
+Api RESTful para o aplicativo de ponto de venda da Contosso S.A. Desenvolvida em c# utilizando o padrão WebApi.
 
-You can use the [editor on GitHub](https://github.com/lucas-rtk/api-ponto-venda/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+Utiliza o entity framework 6 no formato code-first para conectar à uma base de dados MySQL.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+# como contribuir
+Para poder compilar o projeto e contribuir, você precisa seguir alguns passos importantes:
 
-### Markdown
+### Instale o MySQL
+Baixe o instalador do site da Oracle: https://www.mysql.com/
+ 
+Você pode nomear a instância como preferir. Ao definir a senha do usuário root, utilize 12345 para não precisar alterar o web.config da aplicação.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+### Instale o Visual Studio
+Baixe o instalador do site da Microsoft: https://visualstudio.microsoft.com/
 
-```markdown
-Syntax highlighted code block
+Não há configuração específica para esta etapa.
 
-# Header 1
-## Header 2
-### Header 3
+### Crie o schema para o banco de dados
+No MySQL WorkBench, conecte à sua instância local e crie um novo schema chamado ponto-venda.
 
-- Bulleted
-- List
+### Crie a estrutura de dados no schema
+Com o projeto aberto no Visual Studio, acesse o Package Manager Console (Tools > NuGet Package Manager > Package Manager Console) e digite o seguinte comando: 
 
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```
+update-database
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+Este comando irá criar toda a estrutura de dados no schema de forma automática utilizando as migrações do Entity Framework.
 
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/lucas-rtk/api-ponto-venda/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+### Desenvolva!
+Divirta-se! Seu ambiente está pronto para produzir.
