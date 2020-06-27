@@ -10,10 +10,17 @@ using System.Web.Http;
 
 namespace api_ponto_venda.Controllers
 {
-    public class CaixasController : ApiController
+    public class CaixasController : BaseController
     {
         public HttpResponseMessage Post(Caixa caixa)
         {
+            if (ObterUsuario(RequestContext.Principal.Identity.Name).Perfil != PerfilUsuario.Gerente)
+                return new HttpResponseMessage()
+                {
+                    ReasonPhrase = "Usuário sem permissão para cadastrar caixas!",
+                    StatusCode = HttpStatusCode.Forbidden
+                };
+
             if (!caixa.ValidarCamposObrigatorios())
                 return new HttpResponseMessage()
                 {
@@ -57,6 +64,13 @@ namespace api_ponto_venda.Controllers
 
         public HttpResponseMessage Put(int Id, [FromBody] Caixa caixa)
         {
+            if (ObterUsuario(RequestContext.Principal.Identity.Name).Perfil != PerfilUsuario.Gerente)
+                return new HttpResponseMessage()
+                {
+                    ReasonPhrase = "Usuário sem permissão para alterar caixas!",
+                    StatusCode = HttpStatusCode.Forbidden
+                };
+
             if (!caixa.ValidarCamposObrigatorios())
                 return new HttpResponseMessage()
                 {
@@ -101,6 +115,13 @@ namespace api_ponto_venda.Controllers
 
         public HttpResponseMessage Delete(int Id)
         {
+            if (ObterUsuario(RequestContext.Principal.Identity.Name).Perfil != PerfilUsuario.Gerente)
+                return new HttpResponseMessage()
+                {
+                    ReasonPhrase = "Usuário sem permissão para excluir caixas!",
+                    StatusCode = HttpStatusCode.Forbidden
+                };
+
             MySQLContext contexto = new MySQLContext();
             Caixa tmp = new Caixa { Id = Id };
 
@@ -183,6 +204,141 @@ namespace api_ponto_venda.Controllers
             return new HttpResponseMessage()
             {
                 ReasonPhrase = "Caixa aberto com sucesso!",
+                StatusCode = HttpStatusCode.OK
+            };
+        }
+
+        [Route("api/Caixas/FecharCaixa")]
+        [HttpPost]
+        public HttpResponseMessage FecharCaixa(int Id)
+        {
+            try
+            {
+                MySQLContext contexto = new MySQLContext();
+                Caixa caixa = contexto.Caixas
+                                   .Where(c => c.Id == Id)
+                                   .SingleOrDefault();
+
+                if (caixa == null)
+                    return new HttpResponseMessage()
+                    {
+                        ReasonPhrase = "Caixa não encontrado com o ID informado!",
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+
+                if (caixa.Saldo == 0)
+                    return new HttpResponseMessage()
+                    {
+                        ReasonPhrase = "O caixa já está fechado!",
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+
+                caixa.Saldo = 0;
+                contexto.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                while (e.InnerException != null) e = e.InnerException;
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent(e.Message + "\n\n" + e.StackTrace),
+                    StatusCode = HttpStatusCode.InternalServerError
+                };
+            }
+
+            return new HttpResponseMessage()
+            {
+                ReasonPhrase = "Caixa fechado com sucesso!",
+                StatusCode = HttpStatusCode.OK
+            };
+        }
+
+        [Route("api/Caixas/Sangria")]
+        [HttpPost]
+        public HttpResponseMessage Sangria(int Id, double Valor)
+        {
+            try
+            {
+                MySQLContext contexto = new MySQLContext();
+                Caixa caixa = contexto.Caixas
+                                   .Where(c => c.Id == Id)
+                                   .SingleOrDefault();
+
+                if (caixa == null)
+                    return new HttpResponseMessage()
+                    {
+                        ReasonPhrase = "Caixa não encontrado com o ID informado!",
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+
+                if (caixa.Saldo < Valor)
+                    return new HttpResponseMessage()
+                    {
+                        ReasonPhrase = "O valor de sangria é maior do que o saldo do caixa!",
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+
+                caixa.Saldo -= Valor;
+                contexto.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                while (e.InnerException != null) e = e.InnerException;
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent(e.Message + "\n\n" + e.StackTrace),
+                    StatusCode = HttpStatusCode.InternalServerError
+                };
+            }
+
+            return new HttpResponseMessage()
+            {
+                ReasonPhrase = "Sangria realizada.",
+                StatusCode = HttpStatusCode.OK
+            };
+        }
+
+        [Route("api/Caixas/Deposito")]
+        [HttpPost]
+        public HttpResponseMessage Deposito(int Id, double Valor)
+        {
+            try
+            {
+                MySQLContext contexto = new MySQLContext();
+                Caixa caixa = contexto.Caixas
+                                   .Where(c => c.Id == Id)
+                                   .SingleOrDefault();
+
+                if (caixa == null)
+                    return new HttpResponseMessage()
+                    {
+                        ReasonPhrase = "Caixa não encontrado com o ID informado!",
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+
+                if (caixa.Saldo == 0)
+                    return new HttpResponseMessage()
+                    {
+                        ReasonPhrase = "O caixa está fechado! Realize a abertura do caixa para depositar o valor.",
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+
+                caixa.Saldo += Valor;
+                contexto.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                while (e.InnerException != null) e = e.InnerException;
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent(e.Message + "\n\n" + e.StackTrace),
+                    StatusCode = HttpStatusCode.InternalServerError
+                };
+            }
+
+            return new HttpResponseMessage()
+            {
+                ReasonPhrase = "Deposito realizado.",
                 StatusCode = HttpStatusCode.OK
             };
         }
