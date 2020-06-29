@@ -11,6 +11,8 @@ namespace api_ponto_venda.Database
         public DbSet<Fornecedor> Fornecedores { get; set; }
         public DbSet<Produto> Produtos { get; set; }
         public DbSet<Caixa> Caixas { get; set; }
+        public DbSet<NotaFiscal> NotasFiscais { get; set; }
+        public DbSet<NotaFiscalItem> NotasFiscaisItens { get; set; }
 
         public MySQLContext() : base("ConexaoMySQL")
         {

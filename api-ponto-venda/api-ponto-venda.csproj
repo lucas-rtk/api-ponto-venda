@@ -287,6 +287,7 @@
     <Compile Include="Controllers\CaixasController.cs" />
     <Compile Include="Controllers\FornecedoresController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\NotasFiscaisController.cs" />
     <Compile Include="Controllers\ProdutosController.cs" />
     <Compile Include="Controllers\UsuariosController.cs" />
     <Compile Include="Database\MySQLContext.cs" />
@@ -305,9 +306,23 @@
     <Compile Include="Migrations\202006260112389_Caixas.designer.cs">
       <DependentUpon>202006260112389_Caixas.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202006271947320_NotasFiscais.cs" />
+    <Compile Include="Migrations\202006271947320_NotasFiscais.designer.cs">
+      <DependentUpon>202006271947320_NotasFiscais.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006282048258_NormalizacaoUML.cs" />
+    <Compile Include="Migrations\202006282048258_NormalizacaoUML.designer.cs">
+      <DependentUpon>202006282048258_NormalizacaoUML.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006282136037_UnidadeProduto.cs" />
+    <Compile Include="Migrations\202006282136037_UnidadeProduto.designer.cs">
+      <DependentUpon>202006282136037_UnidadeProduto.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Caixa.cs" />
     <Compile Include="Models\Fornecedor.cs" />
+    <Compile Include="Models\NotaFiscal.cs" />
+    <Compile Include="Models\NotaFiscalItem.cs" />
     <Compile Include="Models\Produto.cs" />
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -471,6 +486,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202006260112389_Caixas.resx">
       <DependentUpon>202006260112389_Caixas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006271947320_NotasFiscais.resx">
+      <DependentUpon>202006271947320_NotasFiscais.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006282048258_NormalizacaoUML.resx">
+      <DependentUpon>202006282048258_NormalizacaoUML.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006282136037_UnidadeProduto.resx">
+      <DependentUpon>202006282136037_UnidadeProduto.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

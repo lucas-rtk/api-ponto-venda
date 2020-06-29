@@ -6,6 +6,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Web.Http;
 
 namespace api_ponto_venda.Controllers
@@ -93,6 +94,7 @@ namespace api_ponto_venda.Controllers
                         StatusCode = HttpStatusCode.BadRequest
                     };
 
+                oldofnr.Id = Id;
                 contexto.Entry(oldofnr).CurrentValues.SetValues(fornecedor);
                 contexto.SaveChanges();                
             }

@@ -1,5 +1,6 @@
 ﻿using api_ponto_venda.Database;
 using api_ponto_venda.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -22,10 +23,10 @@ namespace api_ponto_venda.Controllers
                     StatusCode = HttpStatusCode.Forbidden
                 };
 
-            if (!produto.ValidarCamposObrigatorios())
+            if (!produto.ValidarCamposObrigatorios(out string erro))
                 return new HttpResponseMessage()
                 {
-                    ReasonPhrase = "O nome do produto não pode estar em branco!",
+                    ReasonPhrase = erro,
                     StatusCode = HttpStatusCode.BadRequest
                 };
 
@@ -51,7 +52,8 @@ namespace api_ponto_venda.Controllers
             {
                 ReasonPhrase = "Produto criado com sucesso!",
                 StatusCode = HttpStatusCode.OK,
-                Headers = { { "ProdutoId", produto.Id.ToString() } }
+                Headers = { { "ProdutoId", produto.Id.ToString() } },
+                Content = new StringContent(JsonConvert.SerializeObject(produto))
             };
         }
 
@@ -71,10 +73,10 @@ namespace api_ponto_venda.Controllers
                     StatusCode = HttpStatusCode.Forbidden
                 };
 
-            if (!produto.ValidarCamposObrigatorios())
+            if (!produto.ValidarCamposObrigatorios(out string erro))
                 return new HttpResponseMessage()
                 {
-                    ReasonPhrase = "O nome do produto não pode estar em branco!",
+                    ReasonPhrase = erro,
                     StatusCode = HttpStatusCode.BadRequest
                 };
 
@@ -93,6 +95,7 @@ namespace api_ponto_venda.Controllers
                         StatusCode = HttpStatusCode.BadRequest
                     };
 
+                produto.Id = Id;
                 contexto.Entry(oldprod).CurrentValues.SetValues(produto);
                 contexto.SaveChanges();
             }
@@ -109,7 +112,8 @@ namespace api_ponto_venda.Controllers
             return new HttpResponseMessage()
             {
                 ReasonPhrase = "Produto alterado com sucesso!",
-                StatusCode = HttpStatusCode.OK
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(JsonConvert.SerializeObject(produto))
             };
         }
 

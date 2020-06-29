@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace api_ponto_venda.Models
 {
+    public enum OrigemProduto { Nacional, ImportacaoDireta, AdquiridaInterno }
+
     [Table("Produtos")]
     public class Produto
     {
@@ -14,15 +16,42 @@ namespace api_ponto_venda.Models
         [MaxLength(60)]
         public string Nome { get; set; }
         [MaxLength(13)]
-        public string EAN { get; set; }
+        public string SKU { get; set; }
         public double Preco { get; set; }
-        public double IPI { get; set; }
-        public double ICMS { get; set; }
+        [MaxLength(8)]
+        public string NCM { get; set; }
         public double Saldo { get; set; }
+        public OrigemProduto Origem { get; set; }
+        [MaxLength(3)]
+        public string Unidade { get; set; }
 
-        public bool ValidarCamposObrigatorios()
+        public Produto()
         {
-            return (!string.IsNullOrWhiteSpace(Nome));
+            Unidade = "UN";
+        }
+
+        public bool ValidarCamposObrigatorios(out string erro)
+        {
+            if (string.IsNullOrWhiteSpace(Nome))
+            {
+                erro = "O nome do produto não pode estar em branco!";
+                return false;
+            }
+
+            if (Preco < 0)
+            {
+                erro = "Não é possível cadastrar um produto com preço negativo!";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(NCM))
+            {
+                erro = "É necessário informar o NCM do produto!";
+                return false;
+            }
+
+            erro = "";
+            return true;
         }
     }
 }
