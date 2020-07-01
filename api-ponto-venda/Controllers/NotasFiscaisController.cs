@@ -390,6 +390,7 @@ namespace api_ponto_venda.Controllers
             return new MySQLContext().NotasFiscais
                             .Where(n => n.Id == Id)
                             .Include("Fornecedor")
+                            .Include("Itens.Produto")
                             .FirstOrDefault();
         }
     }
