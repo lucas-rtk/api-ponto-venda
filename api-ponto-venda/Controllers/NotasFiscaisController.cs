@@ -100,6 +100,7 @@ namespace api_ponto_venda.Controllers
                 Item.NotaFiscal = contexto.NotasFiscais
                                         .Where(n => n.Id == Id)
                                         .Include("Fornecedor")
+                                        .Include("Itens.Produto")
                                         .FirstOrDefault();
                 if (!Item.NotaFiscal.EmEdicao)
                     return new HttpResponseMessage()
